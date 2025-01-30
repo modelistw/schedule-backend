@@ -62,6 +62,22 @@ app.post('/schedule', authenticateToken, (req, res) => {
     }
 });
 
+app.get('/check-access', (req, res) => {
+    const { day, time } = req.query;
+
+    if (!schedule[day]) {
+        return res.status(400).json({ message: 'Некорректный день недели' });
+    }
+
+    const { start, end } = schedule[day];
+
+    if (time >= start && time <= end) {
+        return res.status(200).json({ access: true, message: 'Доступ разрешен' });
+    } else {
+        return res.status(403).json({ access: false, message: 'Доступ запрещен' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
